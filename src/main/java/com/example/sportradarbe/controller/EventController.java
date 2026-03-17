@@ -1,13 +1,16 @@
 package com.example.sportradarbe.controller;
 
+import java.time.LocalDate;
 import java.util.List;
 
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -28,10 +31,15 @@ public class EventController {
     /**
      * GET /api/events
      * Returns all events with full details (venue, status, season → league → sport, teams).
+     * Supports optional filtering by sportId, leagueId, and date. If a filter is not provided, it is ignored.
      */
     @GetMapping
-    public List<EventResponseDto> getAll() {
-        return eventService.getAllEvents();
+    public List<EventResponseDto> getAll(
+        @RequestParam(required = false) Long sportId,
+        @RequestParam(required = false) Long leagueId,
+        @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date
+    ) {
+        return eventService.getAllEvents(sportId, leagueId, date);
     }
 
     /**

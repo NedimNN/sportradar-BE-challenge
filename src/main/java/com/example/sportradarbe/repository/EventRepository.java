@@ -1,10 +1,12 @@
 package com.example.sportradarbe.repository;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
 import com.example.sportradarbe.entity.Event;
 
@@ -24,9 +26,16 @@ public interface EventRepository extends JpaRepository<Event, Long> {
             JOIN FETCH l.sport
             LEFT JOIN FETCH e.eventTeams et
             LEFT JOIN FETCH et.team
+            WHERE (:sportId IS NULL OR l.sport.sportId = :sportId)
+              AND (:leagueId IS NULL OR s.league.leagueId = :leagueId)
+              AND (:date IS NULL OR e.eventDate = :date)
             ORDER BY e.eventDate ASC, e.timeUtc ASC
             """)
-    List<Event> findAllWithDetails();
+    List<Event> findAllWithDetails(
+        @Param("sportId") Long sportId,
+        @Param("leagueId") Long leagueId,
+        @Param("date") LocalDate date
+    );
 
     /**
      * Same strategy as findAllWithDetails but for a single event by its ID.

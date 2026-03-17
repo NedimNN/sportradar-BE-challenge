@@ -1,5 +1,6 @@
 package com.example.sportradarbe.service;
 
+import java.time.LocalDate;
 import java.util.List;
 
 import org.springframework.http.HttpStatus;
@@ -115,8 +116,8 @@ public class EventService {
     //  READ
 
     @Transactional(readOnly = true)
-    public List<EventResponseDto> getAllEvents() {
-        return eventRepository.findAllWithDetails()
+    public List<EventResponseDto> getAllEvents(Long sportId, Long leagueId, LocalDate date) {
+        return eventRepository.findAllWithDetails(sportId, leagueId, date)
                 .stream()
                 .map(this::toDto)
                 .toList();
