@@ -13,8 +13,9 @@ public record EventRequestDto(
         String description,
         LocalDate eventDate,
         LocalTime timeUtc,
+        Long sportId,
+        Long seasonId,
         Long venueId,
         Long statusId,
-        Long seasonId,
         List<EventTeamRequestDto> teams
 ) {}

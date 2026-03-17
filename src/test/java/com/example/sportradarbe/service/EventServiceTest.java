@@ -72,6 +72,7 @@ class EventServiceTest {
                 1L,
                 1L,
                 1L,
+            1L,
                 List.of(
                         new EventTeamRequestDto(10L, "HOME", null),
                         new EventTeamRequestDto(11L, "AWAY", null)
@@ -164,6 +165,7 @@ class EventServiceTest {
                 1L,
                 1L,
                 1L,
+            1L,
                 List.of()
         );
 
@@ -176,12 +178,70 @@ class EventServiceTest {
         }
 
         @Test
+        void createEvent_withMissingSportId_throwsBadRequest() {
+        EventRequestDto request = new EventRequestDto(
+            "Arsenal vs Chelsea",
+            "Premier League fixture",
+            LocalDate.of(2026, 4, 12),
+            LocalTime.of(15, 30),
+            null,
+            1L,
+            1L,
+            1L,
+            List.of()
+        );
+
+        ResponseStatusException exception = assertThrows(ResponseStatusException.class,
+            () -> eventService.createEvent(request));
+
+        assertEquals(HttpStatus.BAD_REQUEST, exception.getStatusCode());
+        assertTrue(exception.getReason().contains("sportId is required"));
+        verifyNoInteractions(eventRepository, venueRepository, eventStatusRepository, seasonRepository, teamRepository);
+        }
+
+        @Test
+        void createEvent_withMismatchedSportAndSeason_throwsBadRequestWithoutSave() {
+        EventRequestDto request = new EventRequestDto(
+            "Arsenal vs Chelsea",
+            "Premier League fixture",
+            LocalDate.of(2026, 4, 12),
+            LocalTime.of(15, 30),
+            99L,
+            1L,
+            1L,
+            1L,
+            List.of()
+        );
+
+        Sport sport = new Sport();
+        sport.setSportId(1L);
+
+        League league = new League();
+        league.setSport(sport);
+
+        Season season = new Season();
+        season.setSeasonId(1L);
+        season.setLeague(league);
+
+        when(seasonRepository.findById(1L)).thenReturn(Optional.of(season));
+
+        ResponseStatusException exception = assertThrows(ResponseStatusException.class,
+            () -> eventService.createEvent(request));
+
+        assertEquals(HttpStatus.BAD_REQUEST, exception.getStatusCode());
+        assertTrue(exception.getReason().contains("sportId does not match the selected season"));
+        verify(eventRepository, never()).save(any(Event.class));
+        verifyNoInteractions(venueRepository, eventStatusRepository, teamRepository);
+        }
+
+        @Test
         void createEvent_withUnknownTeam_rollsBackFlowWithoutSave() {
         EventRequestDto request = new EventRequestDto(
             "Arsenal vs Chelsea",
             "Premier League fixture",
             LocalDate.of(2026, 4, 12),
             LocalTime.of(15, 30),
+            1L,
             1L,
             1L,
             1L,
@@ -212,6 +272,8 @@ class EventServiceTest {
         when(seasonRepository.findById(1L)).thenReturn(Optional.of(season));
         when(teamRepository.findById(10L)).thenReturn(Optional.of(homeTeam));
         when(teamRepository.findById(999L)).thenReturn(Optional.empty());
+
+        sport.setSportId(1L);
 
         ResponseStatusException exception = assertThrows(ResponseStatusException.class,
             () -> eventService.createEvent(request));

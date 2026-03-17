@@ -58,6 +58,9 @@ public class EventService {
         if (request.title() == null || request.title().isBlank()) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "title is required");
         }
+                if (request.sportId() == null) {
+                        throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "sportId is required");
+                }
         if (request.venueId() == null) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "venueId is required");
         }
@@ -68,6 +71,16 @@ public class EventService {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "seasonId is required");
         }
 
+        Season season = seasonRepository.findById(request.seasonId())
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND,
+                        "Season not found: " + request.seasonId()));
+
+        Long seasonSportId = season.getLeague().getSport().getSportId();
+        if (!request.sportId().equals(seasonSportId)) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
+                    "sportId does not match the selected season");
+        }
+
         Venue venue = venueRepository.findById(request.venueId())
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND,
                         "Venue not found: " + request.venueId()));
@@ -75,10 +88,6 @@ public class EventService {
         EventStatus status = eventStatusRepository.findById(request.statusId())
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND,
                         "EventStatus not found: " + request.statusId()));
-
-        Season season = seasonRepository.findById(request.seasonId())
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND,
-                        "Season not found: " + request.seasonId()));
 
         Event event = new Event();
         event.setTitle(request.title());
