@@ -50,7 +50,7 @@ public class EventService {
         this.teamRepository = teamRepository;
     }
 
-    // ------------------------------------------------------------------ CREATE
+    //  CREATE
 
     @Transactional
     public EventResponseDto createEvent(EventRequestDto request) {
@@ -112,7 +112,7 @@ public class EventService {
                 .orElseThrow());
     }
 
-    // ------------------------------------------------------------------- READ
+    //  READ
 
     @Transactional(readOnly = true)
     public List<EventResponseDto> getAllEvents() {
@@ -130,7 +130,7 @@ public class EventService {
                         "Event not found: " + eventId));
     }
 
-    // ---------------------------------------------------------- ENTITY TO DTO
+    //  ENTITY TO DTO
 
     private EventResponseDto toDto(Event event) {
         VenueDto venueDto = new VenueDto(
