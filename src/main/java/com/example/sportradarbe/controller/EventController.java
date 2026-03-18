@@ -3,8 +3,11 @@ package com.example.sportradarbe.controller;
 import java.time.LocalDate;
 import java.util.List;
 
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.Positive;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -19,6 +22,7 @@ import com.example.sportradarbe.dto.EventResponseDto;
 import com.example.sportradarbe.service.EventService;
 
 @RestController
+@Validated
 @RequestMapping("/api/events")
 public class EventController {
 
@@ -35,8 +39,8 @@ public class EventController {
      */
     @GetMapping
     public List<EventResponseDto> getAll(
-        @RequestParam(required = false) Long sportId,
-        @RequestParam(required = false) Long leagueId,
+        @RequestParam(required = false) @Positive(message = "sportId must be greater than 0") Long sportId,
+        @RequestParam(required = false) @Positive(message = "leagueId must be greater than 0") Long leagueId,
         @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date
     ) {
         return eventService.getAllEvents(sportId, leagueId, date);
@@ -47,7 +51,7 @@ public class EventController {
      * Returns a single event by ID or 404 if not found.
      */
     @GetMapping("/{id}")
-    public EventResponseDto getOne(@PathVariable Long id) {
+    public EventResponseDto getOne(@PathVariable @Positive(message = "id must be greater than 0") Long id) {
         return eventService.getEventById(id);
     }
 
@@ -58,7 +62,7 @@ public class EventController {
      */
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public EventResponseDto create(@RequestBody EventRequestDto request) {
+    public EventResponseDto create(@Valid @RequestBody EventRequestDto request) {
         return eventService.createEvent(request);
     }
 }

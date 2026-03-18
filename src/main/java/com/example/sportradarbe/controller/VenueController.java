@@ -2,7 +2,10 @@ package com.example.sportradarbe.controller;
 
 import java.util.List;
 
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.Positive;
 import org.springframework.http.HttpStatus;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -16,6 +19,7 @@ import com.example.sportradarbe.dto.VenueResponseDto;
 import com.example.sportradarbe.service.VenueService;
 
 @RestController
+@Validated
 @RequestMapping("/api/venues")
 public class VenueController {
 
@@ -31,13 +35,13 @@ public class VenueController {
     }
 
     @GetMapping("/{id}")
-    public VenueResponseDto getOne(@PathVariable Long id) {
+    public VenueResponseDto getOne(@PathVariable @Positive(message = "id must be greater than 0") Long id) {
         return venueService.getVenueById(id);
     }
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public VenueResponseDto create(@RequestBody VenueRequestDto request) {
+    public VenueResponseDto create(@Valid @RequestBody VenueRequestDto request) {
         return venueService.createVenue(request);
     }
 }

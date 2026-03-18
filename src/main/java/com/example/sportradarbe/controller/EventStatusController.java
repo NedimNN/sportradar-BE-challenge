@@ -2,6 +2,8 @@ package com.example.sportradarbe.controller;
 
 import java.util.List;
 
+import jakarta.validation.constraints.Positive;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -11,6 +13,7 @@ import com.example.sportradarbe.dto.EventStatusResponseDto;
 import com.example.sportradarbe.service.EventStatusService;
 
 @RestController
+@Validated
 @RequestMapping("/api/statuses")
 public class EventStatusController {
 
@@ -26,7 +29,7 @@ public class EventStatusController {
     }
 
     @GetMapping("/{id}")
-    public EventStatusResponseDto getOne(@PathVariable Long id) {
+    public EventStatusResponseDto getOne(@PathVariable @Positive(message = "id must be greater than 0") Long id) {
         return eventStatusService.getStatusById(id);
     }
 }

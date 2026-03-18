@@ -2,6 +2,8 @@ package com.example.sportradarbe.controller;
 
 import java.util.List;
 
+import jakarta.validation.constraints.Positive;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -11,6 +13,7 @@ import com.example.sportradarbe.dto.LeagueResponseDto;
 import com.example.sportradarbe.service.LeagueService;
 
 @RestController
+@Validated
 @RequestMapping("/api/leagues")
 public class LeagueController {
 
@@ -26,7 +29,7 @@ public class LeagueController {
     }
 
     @GetMapping("/{id}")
-    public LeagueResponseDto getOne(@PathVariable Long id) {
+    public LeagueResponseDto getOne(@PathVariable @Positive(message = "id must be greater than 0") Long id) {
         return leagueService.getLeagueById(id);
     }
 }
