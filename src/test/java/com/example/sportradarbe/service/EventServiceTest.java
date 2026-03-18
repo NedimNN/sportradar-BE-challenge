@@ -42,7 +42,7 @@ import com.example.sportradarbe.repository.TeamRepository;
 import com.example.sportradarbe.repository.VenueRepository;
 
 @ExtendWith(MockitoExtension.class)
-class EventServiceTest {
+public class EventServiceTest {
 
     @Mock
     private EventRepository eventRepository;

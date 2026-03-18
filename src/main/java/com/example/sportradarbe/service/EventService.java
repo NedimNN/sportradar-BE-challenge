@@ -126,7 +126,18 @@ public class EventService {
 
     @Transactional(readOnly = true)
     public List<EventResponseDto> getAllEvents(Long sportId, Long leagueId, LocalDate date) {
-        return eventRepository.findAllWithDetails(sportId, leagueId, date)
+        boolean applySportFilter = sportId != null;
+        boolean applyLeagueFilter = leagueId != null;
+        boolean applyDateFilter = date != null;
+
+        return eventRepository.findAllWithDetails(
+                applySportFilter,
+                sportId,
+                applyLeagueFilter,
+                leagueId,
+                applyDateFilter,
+                date
+        )
                 .stream()
                 .map(this::toDto)
                 .toList();

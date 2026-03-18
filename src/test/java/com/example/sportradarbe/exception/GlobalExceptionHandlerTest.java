@@ -11,7 +11,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import java.time.LocalDate;
-import java.time.LocalTime;
 import java.util.List;
 
 import org.junit.jupiter.api.Test;
@@ -29,7 +28,7 @@ import com.example.sportradarbe.service.EventService;
 
 @WebMvcTest(EventController.class)
 @Import(GlobalExceptionHandler.class)
-class GlobalExceptionHandlerTest {
+public class GlobalExceptionHandlerTest {
 
     @Autowired
     private MockMvc mockMvc;

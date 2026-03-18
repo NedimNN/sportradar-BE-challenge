@@ -1,7 +1,0 @@
-# Local development overrides (copy to application-local.properties and fill values)
-spring.datasource.url=jdbc:postgresql://localhost:5432/sportradar
-spring.datasource.username=postgres
-spring.datasource.password=your_password_here
-
-# Optional local server port
-# server.port=8081

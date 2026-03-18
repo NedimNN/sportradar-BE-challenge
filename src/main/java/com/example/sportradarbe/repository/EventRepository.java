@@ -26,14 +26,17 @@ public interface EventRepository extends JpaRepository<Event, Long> {
             JOIN FETCH l.sport
             LEFT JOIN FETCH e.eventTeams et
             LEFT JOIN FETCH et.team
-            WHERE (:sportId IS NULL OR l.sport.sportId = :sportId)
-              AND (:leagueId IS NULL OR s.league.leagueId = :leagueId)
-              AND (:date IS NULL OR e.eventDate = :date)
+            WHERE (:applySportFilter = false OR l.sport.sportId = :sportId)
+              AND (:applyLeagueFilter = false OR s.league.leagueId = :leagueId)
+              AND (:applyDateFilter = false OR e.eventDate = :date)
             ORDER BY e.eventDate ASC, e.timeUtc ASC
             """)
     List<Event> findAllWithDetails(
+        @Param("applySportFilter") boolean applySportFilter,
         @Param("sportId") Long sportId,
+        @Param("applyLeagueFilter") boolean applyLeagueFilter,
         @Param("leagueId") Long leagueId,
+        @Param("applyDateFilter") boolean applyDateFilter,
         @Param("date") LocalDate date
     );
 
